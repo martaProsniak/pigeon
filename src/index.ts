@@ -9,7 +9,7 @@ const app: Express = express();
 const port = process.env.PORT;
 
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
-app.use(express.json({ limit: "30mb"}));
+app.use(express.json({ limit: "30mb" }));
 
 app.use("/users", userRoutes);
 app.use("/tweets", tweetsRoutes);
