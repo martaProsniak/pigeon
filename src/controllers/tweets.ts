@@ -31,8 +31,18 @@ export const getTweetsByUser = async (req: Request, res: Response) => {
   }
 };
 
-export const createNewTweet = (req: Request, res: Response) => {
-  res.send("Tweet created");
+export const createNewTweet = async (req: Request, res: Response) => {
+  const { id: authorId } = req.params;
+  const { title, content } = req.body;
+
+  const result = await prisma.tweet.create({
+    data: {
+      title,
+      content,
+      author: { connect: { id: parseInt(authorId) } },
+    },
+  });
+  res.json(result);
 };
 
 export const deleteTweet = (req: Request, res: Response) => {
