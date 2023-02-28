@@ -10,9 +10,25 @@ export const getAllTweets = async (req: Request, res: Response) => {
   res.status(200).json(tweets);
 };
 
-export const getTweetsByUser = (req: Request, res: Response) => {
+export const getTweetsByUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  res.send("Tweets by user " + id);
+
+  const tweets = await prisma.user
+    .findUnique({
+      where: {
+        id: Number(id),
+      },
+    })
+    .tweets({
+      orderBy: { createdAt: Prisma.SortOrder.desc } as any,
+    });
+
+  if (tweets?.length) {
+    res.status(200).json(tweets);
+  }
+  if (tweets?.length === 0) {
+    res.send("User didn't published any tweets");
+  }
 };
 
 export const createNewTweet = (req: Request, res: Response) => {
