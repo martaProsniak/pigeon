@@ -1,7 +1,13 @@
 import { Request, Response } from "express";
+import { Prisma } from "@prisma/client";
+import prisma from "../prisma";
 
-export const getAllTweets = (req: Request, res: Response) => {
-  res.send("List of tweets");
+export const getAllTweets = async (req: Request, res: Response) => {
+  const tweets = await prisma.tweet.findMany({
+    orderBy: { createdAt: Prisma.SortOrder.desc } as any,
+  });
+
+  res.status(200).json(tweets);
 };
 
 export const getTweetsByUser = (req: Request, res: Response) => {
