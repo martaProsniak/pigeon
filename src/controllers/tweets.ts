@@ -45,6 +45,12 @@ export const createNewTweet = async (req: Request, res: Response) => {
   res.json(result);
 };
 
-export const deleteTweet = (req: Request, res: Response) => {
-  res.send("Tweet deleted");
+export const deleteTweet = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const post = await prisma.tweet.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+  res.json(post);
 };

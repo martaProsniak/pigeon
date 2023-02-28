@@ -11,6 +11,6 @@ const router = express.Router();
 router.get("/", getAllTweets);
 router.get("/user/:id", getTweetsByUser);
 router.post("/user/:id", createNewTweet);
-router.delete("user/:id", deleteTweet);
+router.delete("/:id", deleteTweet);
 
 export default router;
