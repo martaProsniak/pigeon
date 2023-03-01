@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../prisma";
 import jwt from "jsonwebtoken";
 import sha256 from "sha256";
+import { getUserWithoutPassword } from "../utils";
 
 const secret = "test";
 
@@ -15,7 +16,13 @@ export const getUser = async (req: Request, res: Response) => {
     },
   });
 
-  res.status(200).json(user);
+  if (user) {
+    res.status(200).json(getUserWithoutPassword(user));
+  }
+
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+  }
 };
 
 export const getTweetsByUser = async (req: Request, res: Response) => {
