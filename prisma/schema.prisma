@@ -2,18 +2,19 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String?
-  tweets Tweet[]
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  name     String?
+  tweets   Tweet[]
 }
 
 model Tweet {
-  id Int @id @default(autoincrement())
-  title String
-  content String
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
   createdAt DateTime @default(now())
 }
 
