@@ -11,8 +11,12 @@ export const getAllTweets = async (req: Request, res: Response) => {
 };
 
 export const createNewTweet = async (req: Request, res: Response) => {
-  const { id: authorId } = req.params;
+  const authorId = req.userId;
   const { title, content } = req.body;
+
+  if (!authorId) {
+    return res.status(400).send({ message: "Log in to add a tweet" });
+  }
 
   const result = await prisma.tweet.create({
     data: {
@@ -26,10 +30,26 @@ export const createNewTweet = async (req: Request, res: Response) => {
 
 export const deleteTweet = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const post = await prisma.tweet.delete({
+  const authorId = req.userId;
+
+  if (!authorId) {
+    return res.status(400).send({ message: "Log in to delete a tweet" });
+  }
+
+  const tweetToRemove = await prisma.tweet.findUnique({
     where: {
       id: Number(id),
     },
   });
-  res.json(post);
+
+  if (tweetToRemove?.authorId !== Number(authorId)) {
+    return res.status(400).send({message: 'Not possible to delete tweet not added by you. Delete your own tweets!'})
+  }
+
+  const result = await prisma.tweet.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+  res.json(result);
 };

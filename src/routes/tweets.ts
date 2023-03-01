@@ -4,11 +4,12 @@ import {
   createNewTweet,
   deleteTweet,
 } from "../controllers/tweets";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.get("/", getAllTweets);
-router.post("/user/:id", createNewTweet);
-router.delete("/:id", deleteTweet);
+router.post("/new", auth, createNewTweet);
+router.delete("/:id", auth, deleteTweet);
 
 export default router;

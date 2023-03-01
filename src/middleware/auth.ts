@@ -1,17 +1,24 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
-// TODO move secret to .env file
-const secret = "test";
+const secret = "secret";
+
+interface JwtPayload {
+  id: string
+}
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1]; 
+    const token = req.headers.authorization?.split(" ")[1];
     if (token) {
-      const decodedData = jwt.verify(token, secret);
-      console.log(decodedData)
+      const decodedData = jwt.verify(token, secret) as JwtPayload
 
-      // req.userId = decodedData.sub || undefined;
+      req.userId = decodedData.id
     }
-  } catch (e) {}
+    next();
+  } catch (e) {
+    console.log(e);
+  }
 };
+
+export default auth;
