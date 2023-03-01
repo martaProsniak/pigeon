@@ -67,5 +67,36 @@ export const signin = async (req: Request, res: Response) => {
 };
 
 export const signup = async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { email, password, name } = req.body;
+
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: String(email),
+      },
+    });
+
+    if (existingUser)
+      return res.status(400).json({
+        message:
+          "This email is already taken! Please use another one to create new account or sign in.",
+      });
+
+    const hashedPassword = sha256(password);
+
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        name,
+        password: hashedPassword,
+      },
+    });
+
+    const token = jwt.sign({ email: newUser.email, id: newUser.id }, secret, {
+      expiresIn: "1h",
+    });
+    res.status(200).json({ result: newUser, token });
+  } catch (e) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
