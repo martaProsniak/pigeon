@@ -15,7 +15,7 @@ app.use("/users", userRoutes);
 app.use("/tweets", tweetsRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + Typescript Server");
+  res.send("Express, Typescript and Prisma exercise");
 });
 
 app.listen(port, () => {

@@ -25,7 +25,7 @@ export const createNewTweet = async (req: Request, res: Response) => {
       author: { connect: { id: parseInt(authorId) } },
     },
   });
-  res.json(result);
+  res.status(201).json(result);
 };
 
 export const deleteTweet = async (req: Request, res: Response) => {
@@ -51,5 +51,5 @@ export const deleteTweet = async (req: Request, res: Response) => {
       id: Number(id),
     },
   });
-  res.json(result);
+  res.status(204).json(result);
 };

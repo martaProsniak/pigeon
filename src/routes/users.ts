@@ -9,6 +9,7 @@ import {
   getPendingFriendRequests,
   acceptFriendRequest,
   denyFriendRequest,
+  deleteFriendRequest,
 } from "../controllers/users";
 import auth from "../middleware/auth.js";
 
@@ -21,6 +22,7 @@ router.post("/signup", signup);
 router.get("/", auth, getUsers);
 router.post("/:id/invite", auth, inviteToFriends);
 router.get("/:id/friendRequests", auth, getPendingFriendRequests);
+router.delete("/friendRequests/:id", auth, deleteFriendRequest);
 router.put("/friendRequests/:id/accept", auth, acceptFriendRequest);
 router.put("/friendRequests/:id/deny", auth, denyFriendRequest);
 

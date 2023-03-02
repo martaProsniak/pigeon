@@ -163,7 +163,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const inviteToFriends = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    return res.status(401).json({ message: "Please log in to see the users" });
+    return res.status(401).json({ message: "Please log in to invite friends" });
   }
 
   const { id } = req.params;
@@ -182,7 +182,9 @@ export const inviteToFriends = async (req: Request, res: Response) => {
 
 export const getPendingFriendRequests = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    return res.status(401).json({ message: "Please log in to see the users" });
+    return res
+      .status(401)
+      .json({ message: "Please log in to see the friend requests" });
   }
 
   const friendRequests = await prisma.friendRequest.findMany({
@@ -197,7 +199,9 @@ export const getPendingFriendRequests = async (req: Request, res: Response) => {
 
 export const acceptFriendRequest = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    return res.status(401).json({ message: "Please log in to see the users" });
+    return res
+      .status(401)
+      .json({ message: "Please log in to accept the invitation" });
   }
 
   const { id } = req.params;
@@ -216,7 +220,9 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 
 export const denyFriendRequest = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    return res.status(401).json({ message: "Please log in to see the users" });
+    return res
+      .status(401)
+      .json({ message: "Please log in to reject the invitation" });
   }
 
   const { id } = req.params;
@@ -231,4 +237,33 @@ export const denyFriendRequest = async (req: Request, res: Response) => {
   });
 
   res.status(204).json({ updatedFriendRequest });
+};
+
+export const deleteFriendRequest = async (req: Request, res: Response) => {
+  if (!req?.userId) {
+    return res
+      .status(401)
+      .json({ message: "Please log in delete friend request" });
+  }
+
+  const { id } = req.params;
+
+  const friendRequest = await prisma.friendRequest.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (friendRequest?.invitatorId !== Number(req.userId)) {
+    return res
+      .status(409)
+      .json({ message: "You cannot delete another users requests" });
+  }
+
+  const result = await prisma.friendRequest.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+  res.status(204).json(result);
 };

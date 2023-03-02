@@ -20,4 +20,4 @@ To see the current database records in GUI, you can run `npm run db-studio`
 
 ## Running app
 
-To start the app, please run `npm dev`
+To start the app, please run `npm run dev`
