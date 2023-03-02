@@ -7,6 +7,8 @@ model User {
   password String
   name     String
   tweets   Tweet[]
+  sendFriendRequests  FriendRequest[] @relation("Invitator")
+  receivedFriendRequest FriendRequest[] @relation("Receiver")
 }
 
 model Tweet {
@@ -15,6 +17,16 @@ model Tweet {
   content   String
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
+  createdAt DateTime @default(now())
+}
+
+model FriendRequest {
+  id Int @id @default(autoincrement())
+  status    String  @default("PENDING")
+  invitator User @relation(name: "Invitator", fields: [invitatorId], references: [id])
+  invitatorId Int
+  receiver User @relation(name: "Receiver", fields: [receiverId], references: [id])
+  receiverId Int
   createdAt DateTime @default(now())
 }
 

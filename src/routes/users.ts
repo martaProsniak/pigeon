@@ -1,11 +1,23 @@
 import express from "express";
-import { getUser, getTweetsByUser, signin, signup } from "../controllers/users";
+import {
+  getUser,
+  getTweetsByUser,
+  signin,
+  signup,
+  getUsers,
+  inviteToFriends,
+  getPendingFriendRequests,
+} from "../controllers/users";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.get("/:id", getUser);
 router.get("/:id/tweets", getTweetsByUser);
 router.post("/signin", signin);
-router.post("/signup", signup);;
+router.post("/signup", signup);
+router.get("/", auth, getUsers);
+router.post("/:id/invite", auth, inviteToFriends);
+router.get("/:id/friendRequests", auth, getPendingFriendRequests);
 
 export default router;

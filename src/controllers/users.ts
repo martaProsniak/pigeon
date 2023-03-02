@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import sha256 from "sha256";
 import { getUserWithoutPassword } from "../utils";
 
-const secret = "test";
+const secret = "secret";
 
 export const getUser = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -13,6 +13,21 @@ export const getUser = async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({
     where: {
       id: Number(id),
+    },
+    include: {
+      tweets: {
+        select: {
+          title: true,
+          content: true,
+          createdAt: true,
+          id: true,
+        },
+      },
+      receivedFriendRequest: {
+        where: {
+          status: String("ACCEPTED"),
+        },
+      },
     },
   });
 
@@ -106,4 +121,63 @@ export const signup = async (req: Request, res: Response) => {
   } catch (e) {
     res.status(500).json({ message: "Something went wrong" });
   }
+};
+
+export const getUsers = async (req: Request, res: Response) => {
+  if (!req?.userId) {
+    res.status(401).json({ message: "Please log in to see the users" });
+  }
+  const users = await prisma.user.findMany();
+
+  if (users?.length) {
+    const usersWithoutPassword = users.map((user) =>
+      getUserWithoutPassword(user)
+    );
+    res.status(200).json(usersWithoutPassword);
+  }
+  if (users?.length === 0) {
+    res.send("No users in service yet!");
+  }
+};
+
+export const inviteToFriends = async (req: Request, res: Response) => {
+  if (!req?.userId) {
+    res.status(401).json({ message: "Please log in to see the users" });
+  }
+
+  const { id } = req.params;
+
+  const friendRequest = await prisma.friendRequest.create({
+    data: {
+      invitatorId: Number(req.userId),
+      receiverId: Number(id),
+    },
+  });
+
+  if (friendRequest) {
+    res.status(201).json({ friendRequest });
+  }
+};
+
+export const getPendingFriendRequests = async (req: Request, res: Response) => {
+  if (!req?.userId) {
+    res.status(401).json({ message: "Please log in to see the users" });
+  }
+
+  const friendRequests = await prisma.friendRequest.findMany({
+    where: {
+      receiverId: Number(req.userId),
+      status: String("PENDING"),
+    },
+  });
+
+  res.status(200).json({ friendRequests });
+};
+
+export const acceptFriendRequest = async (req: Request, res: Response) => {
+  if (!req?.userId) {
+    res.status(401).json({ message: "Please log in to see the users" });
+  }
+
+  
 };
