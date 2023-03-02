@@ -21,7 +21,7 @@ router.post("/signup", signup);
 router.get("/", auth, getUsers);
 router.post("/:id/invite", auth, inviteToFriends);
 router.get("/:id/friendRequests", auth, getPendingFriendRequests);
-router.post("/friendRequests/:id/accept", auth, acceptFriendRequest);
-router.post("/friendRequests/:id/deny", auth, denyFriendRequest);
+router.put("/friendRequests/:id/accept", auth, acceptFriendRequest);
+router.put("/friendRequests/:id/deny", auth, denyFriendRequest);
 
 export default router;

@@ -211,7 +211,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     },
   });
 
-  res.status(200).json({ updatedFriendRequest });
+  res.status(204).json({ updatedFriendRequest });
 };
 
 export const denyFriendRequest = async (req: Request, res: Response) => {
@@ -230,5 +230,5 @@ export const denyFriendRequest = async (req: Request, res: Response) => {
     },
   });
 
-  res.status(200).json({ updatedFriendRequest });
+  res.status(204).json({ updatedFriendRequest });
 };
