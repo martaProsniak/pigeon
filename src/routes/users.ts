@@ -7,6 +7,8 @@ import {
   getUsers,
   inviteToFriends,
   getPendingFriendRequests,
+  acceptFriendRequest,
+  denyFriendRequest,
 } from "../controllers/users";
 import auth from "../middleware/auth.js";
 
@@ -19,5 +21,7 @@ router.post("/signup", signup);
 router.get("/", auth, getUsers);
 router.post("/:id/invite", auth, inviteToFriends);
 router.get("/:id/friendRequests", auth, getPendingFriendRequests);
+router.post("/friendRequests/:id/accept", auth, acceptFriendRequest);
+router.post("/friendRequests/:id/deny", auth, denyFriendRequest);
 
 export default router;

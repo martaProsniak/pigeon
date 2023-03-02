@@ -24,8 +24,29 @@ export const getUser = async (req: Request, res: Response) => {
         },
       },
       receivedFriendRequest: {
-        where: {
-          status: String("ACCEPTED"),
+        select: {
+          id: true,
+          status: true,
+          invitator: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+            },
+          },
+        },
+      },
+      sendFriendRequests: {
+        select: {
+          id: true,
+          status: true,
+          receiver: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+            },
+          },
         },
       },
     },
@@ -125,7 +146,7 @@ export const signup = async (req: Request, res: Response) => {
 
 export const getUsers = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    res.status(401).json({ message: "Please log in to see the users" });
+    return res.status(401).json({ message: "Please log in to see the users" });
   }
   const users = await prisma.user.findMany();
 
@@ -142,7 +163,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const inviteToFriends = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    res.status(401).json({ message: "Please log in to see the users" });
+    return res.status(401).json({ message: "Please log in to see the users" });
   }
 
   const { id } = req.params;
@@ -161,7 +182,7 @@ export const inviteToFriends = async (req: Request, res: Response) => {
 
 export const getPendingFriendRequests = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    res.status(401).json({ message: "Please log in to see the users" });
+    return res.status(401).json({ message: "Please log in to see the users" });
   }
 
   const friendRequests = await prisma.friendRequest.findMany({
@@ -176,8 +197,38 @@ export const getPendingFriendRequests = async (req: Request, res: Response) => {
 
 export const acceptFriendRequest = async (req: Request, res: Response) => {
   if (!req?.userId) {
-    res.status(401).json({ message: "Please log in to see the users" });
+    return res.status(401).json({ message: "Please log in to see the users" });
   }
 
-  
+  const { id } = req.params;
+
+  const updatedFriendRequest = await prisma.friendRequest.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      status: "ACCEPTED",
+    },
+  });
+
+  res.status(200).json({ updatedFriendRequest });
+};
+
+export const denyFriendRequest = async (req: Request, res: Response) => {
+  if (!req?.userId) {
+    return res.status(401).json({ message: "Please log in to see the users" });
+  }
+
+  const { id } = req.params;
+
+  const updatedFriendRequest = await prisma.friendRequest.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      status: "DENIED",
+    },
+  });
+
+  res.status(200).json({ updatedFriendRequest });
 };
